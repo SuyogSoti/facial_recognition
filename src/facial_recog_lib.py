@@ -76,7 +76,24 @@ def vectorToImage(vector):
     img = Image.fromarray(vec)
     img.show()
 
+def recognize_face(inputFace, epsilon=0.85):
+    """
+        inputFace is a path to a picture
+        epsilon is 0.85 by default but user can specify
+    """
+    path = os.path.realpath(__file__).split("/")
+    path = path[0:len(path)-1]
+    path = "/".join(path)
+    path += "/../faces"
+    vectors, covar, avg = covariance(path)
+    transVec = vectors.T
+    pca, newEvecs = eigenStuff(vectors, covar, epsilon)
+    weights = np.array([find_weight(newEvecs, x, avg) for x in transVec])
+    in_vec = read_image(inputFace)
+    in_weight = find_weight(newEvecs, in_vec, avg)
+    error = np.dot(weights, in_weight)
+    index = np.argmin(error)
+    vectorToImage(transVec[index])
 
 if __name__ == '__main__':
-    vectors, covar, avg = covariance("/home/ubuntu/workspace/faces")
-    pca, newEvecs = eigenStuff(vectors, covar, 0.85)
+    recognize_face("/home/ubuntu/workspace/faces/s1/2.pgm")
