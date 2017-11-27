@@ -29,7 +29,7 @@ def covariance(path):
     avg = np.mean(vectors, axis=0)
 
     for index in range(len(vectors)):
-        vectors[index, :] = vectors[index, :] - avg
+        vectors[index] = vectors[index] - avg
 
     covar = np.dot(vectors, vectors.T) / len(vectors)
 
@@ -47,11 +47,12 @@ def eigenStuff(vectors, covar, epsilon):
     # values
     evals = sorted(evals, reverse=True)
     index = 1
-    while (len(vectors) * sum(principle_components)) / variance <= epsilon:
+    while ((len(vectors[0]) * sum(principle_components)) / variance) <= epsilon:
         principle_components = np.append(principle_components, evals[index])
         index += 1
 
     newEvecs = []
+    print("Number of eigen vectors: " + str(len(principle_components)))
     for val in principle_components:
         mult = np.dot(vectors, edict[val])
         newEvecs.append(mult)
@@ -61,11 +62,14 @@ def eigenStuff(vectors, covar, epsilon):
     return principle_components, newEvecs
 
 
-def find_weight(evecs, x, mean):
+def find_weight(evecs, x, mean=0):
     return np.dot(evecs.T, x - mean)
 
+
 def reconstruct(evecs, weights, mean):
-    return np.dot(evecs, weights) + mean
+    og = np.dot(evecs, weights) + mean
+    return og
+
 
 def vectorToImage(vector):
     """This function will convert the vector to images"""
@@ -75,6 +79,7 @@ def vectorToImage(vector):
     vec = np.vstack(vec)
     img = Image.fromarray(vec)
     img.show()
+
 
 def recognize_face(inputFace, epsilon=0.85):
     """
@@ -90,7 +95,7 @@ def recognize_face(inputFace, epsilon=0.85):
     pca, newEvecs = eigenStuff(vectors, covar, epsilon)
     in_vec = read_image(inputFace)
     in_weight = find_weight(newEvecs, in_vec, avg)
-    weights = np.array([find_weight(newEvecs, x, avg) for x in transVec])
+    weights = np.array([find_weight(newEvecs, x) for x in transVec])
 
     err = [np.linalg.norm(in_weight - row) for row in weights]
     index = np.argmin(err)
@@ -104,5 +109,5 @@ if __name__ == '__main__':
     path = os.path.realpath(__file__).split("/")
     path = path[0:len(path)-1]
     path = "/".join(path)
-    path += "/../faces/s15/7.pgm"
-    recognize_face(path, epsilon=.9)
+    path += "/../faces/s15/2.pgm"
+    recognize_face(path, epsilon=.01)
