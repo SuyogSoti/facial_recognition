@@ -85,7 +85,7 @@ def recognize_face(inputFace, k=100):
         epsilon is 0.85 by default but user can specify
     """
     path = os.path.realpath(__file__).split("/")
-    path = path[0:len(path)-1]
+    path = path[0:len(path) - 1]
     path = "/".join(path)
     path += "/../faces"
     vectors, covar, avg = covariance(path)
@@ -97,6 +97,14 @@ def recognize_face(inputFace, k=100):
 
     err = [np.linalg.norm(in_weight - row) for row in weights]
     index = np.argmin(err)
+    min_err = err[index]
+    print("Min Err:", min_err)
+    if min_err < 5700000:
+        print("This face exists in our database")
+    elif min_err < 7000000:
+        print("This image is most likely a face but does not exist in our database")
+    else:
+        print("Please make sure the input image is a face")
     vectorToImage(in_vec)
     vectorToImage(reconstruct(newEvecs, in_weight, avg))
     vectorToImage(transVec[index] + avg)
@@ -105,7 +113,7 @@ def recognize_face(inputFace, k=100):
 
 if __name__ == '__main__':
     path = os.path.realpath(__file__).split("/")
-    path = path[0:len(path)-1]
+    path = path[0:len(path) - 1]
     path = "/".join(path)
-    path += "/../faces/newFaces/4.jpg"
+    path += "/../faces/newFaces/10.pgm"
     recognize_face(path, k=10)
