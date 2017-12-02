@@ -19,6 +19,7 @@ def covariance(path):
     folders = os.listdir(path)
     folders.remove("README")
     folders.remove("newFaces")
+    # folders.remove("avery")
     for folder in folders:
         newFolder = os.listdir(path + '/' + folder)
         for picture in newFolder:
@@ -36,21 +37,16 @@ def covariance(path):
     return vectors.T, covar, avg
 
 
-def eigenStuff(vectors, covar, epsilon):
-    evals, evecs = np.linalg.eig(covar)
+def eigenStuff(vectors, covar, k):
+    evals, evecs = np.linalg.eigh(covar)
     edict = {}
     for index in range(len(evals)):
         edict[evals[index]] = evecs[index]
-    variance = sum(evals) * len(vectors)
     principle_components = np.array([evals[0]])
     # this epsilon stuff makes it so that we only use our most important eigen
     # values
     evals = sorted(evals, reverse=True)
-    index = 1
-    while ((len(vectors[0]) * sum(principle_components)) / variance) <= epsilon:
-        principle_components = np.append(principle_components, evals[index])
-        index += 1
-
+    principle_components = evals[:k]
     newEvecs = []
     print("Number of eigen vectors: " + str(len(principle_components)))
     for val in principle_components:
@@ -63,11 +59,13 @@ def eigenStuff(vectors, covar, epsilon):
 
 
 def find_weight(evecs, x, mean=0):
-    return np.dot(evecs.T, x - mean)
+    weight = np.dot(evecs.T, x - mean)
+    return weight
 
 
 def reconstruct(evecs, weights, mean):
     og = np.dot(evecs, weights) + mean
+    # return (og*255)/max(og)
     return og
 
 
@@ -81,7 +79,7 @@ def vectorToImage(vector):
     img.show()
 
 
-def recognize_face(inputFace, epsilon=0.85):
+def recognize_face(inputFace, k=100):
     """
         inputFace is a path to a picture
         epsilon is 0.85 by default but user can specify
@@ -92,7 +90,7 @@ def recognize_face(inputFace, epsilon=0.85):
     path += "/../faces"
     vectors, covar, avg = covariance(path)
     transVec = vectors.T
-    pca, newEvecs = eigenStuff(vectors, covar, epsilon)
+    pca, newEvecs = eigenStuff(vectors, covar, k)
     in_vec = read_image(inputFace)
     in_weight = find_weight(newEvecs, in_vec, avg)
     weights = np.array([find_weight(newEvecs, x) for x in transVec])
@@ -109,5 +107,5 @@ if __name__ == '__main__':
     path = os.path.realpath(__file__).split("/")
     path = path[0:len(path)-1]
     path = "/".join(path)
-    path += "/../faces/s15/2.pgm"
-    recognize_face(path, epsilon=.01)
+    path += "/../faces/newFaces/4.jpg"
+    recognize_face(path, k=10)
