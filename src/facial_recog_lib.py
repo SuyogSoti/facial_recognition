@@ -115,5 +115,5 @@ if __name__ == '__main__':
     path = os.path.realpath(__file__).split("/")
     path = path[0:len(path) - 1]
     path = "/".join(path)
-    path += "/../faces/newFaces/10.pgm"
+    path += "/../faces/newFaces/4.jpg"
     recognize_face(path, k=10)
