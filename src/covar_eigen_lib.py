@@ -86,6 +86,3 @@ def count_faces():
         if '/s' in f[0]:
             count += len(f[2])
     return int(count)
-
-if __name__ == '__main__':
-    count_faces()
