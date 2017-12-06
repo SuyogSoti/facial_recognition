@@ -39,7 +39,7 @@ def recognize_face(inputFace, k=100):
     cel.vectorToImage(in_vec)
     cel.vectorToImage(cel.reconstruct(newEvecs, in_weight, avg))
     cel.vectorToImage(transVec[index] + avg)
-    # [vectorToImage(x) for x in newEvecs.T]
+    # [cel.vectorToImage(x) for x in newEvecs.T[:10]]
 
 
 if __name__ == '__main__':
