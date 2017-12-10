@@ -66,11 +66,11 @@ def eigenStuff(vectors, covar, k):
 
 def find_weight(evecs, x, mean=0):
     weight = np.dot(evecs.T, x - mean)
-    return weight
+    return weight/np.linalg.norm(weight)
 
 
 def reconstruct(evecs, weights, mean):
-    og = np.dot(evecs, weights) + mean
+    og = normalize(np.dot(evecs, weights) + mean, 0 ,255)
     # return (og*255)/max(og)
     return og
 
