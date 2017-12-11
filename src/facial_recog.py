@@ -40,7 +40,7 @@ def recognize_face(inputFace, k=100):
     else:
         print("Please make sure the input image is a face")
     cel.vectorToImage(in_vec)
-    cel.vectorToImage(cel.reconstruct(newEvecs, in_weight, avg))
+    #cel.vectorToImage(cel.reconstruct(newEvecs, in_weight, avg))
     cel.vectorToImage(transVec[index] + avg)
     #[cel.vectorToImage(x) for x in newEvecs.T[:k]]
 
@@ -50,5 +50,5 @@ if __name__ == '__main__':
     path = path[0:len(path) - 1]
     path = "/".join(path)
     #path += "/../faces/newFaces/4.jpg"
-    path += "/../faces/newFaces/avery.jpg"
-    recognize_face(path, k=400)
+    path += "/../faces/newFaces/4.jpg"
+    recognize_face(path, k=10)

@@ -43,7 +43,7 @@ def covariance(path):
     return vectors.T, covar, avg
 
 def eigenStuff(vectors, covar, k):
-    evals, evecs = np.linalg.eig(covar)
+    evals, evecs = np.linalg.eigh(covar)
     edict = {}
     
     for index in range(len(evals)):
