@@ -16,64 +16,64 @@ def recognize_face(inputFace, k=100):
     transVec, covar, avg, safe = cel.covariance(path)
     myf = open("overall.csv", 'w')
     myf.write("index, predic, real, accurate, err\n")
-    # for vec_index in range(100):
-    #     in_vec = transVec[vec_index]
-    #     transVec = np.delete(transVec, vec_index, 0)
-    #     vectors = transVec
-    #     avg = np.mean(vectors, axis=0)
+    for vec_index in range(20):
+        in_vec = transVec[vec_index]
+        transVec = np.delete(transVec, vec_index, 0)
+        vectors = transVec
+        avg = np.mean(vectors, axis=0)
 
-    #     for index in range(len(vectors)):
-    #         vectors[index] = vectors[index] - avg
+        for index in range(len(vectors)):
+            vectors[index] = vectors[index] - avg
 
-    #     covar = np.dot(vectors, vectors.T) / len(vectors)
+        covar = np.dot(vectors, vectors.T) / len(vectors)
 
-    #     vectors = transVec.T
-    #     tempSafe = 0
-    #     if vec_index < safe:
-    #         tempSafe = safe - 1
+        vectors = transVec.T
+        tempSafe = 0
+        if vec_index < safe:
+            tempSafe = safe - 1
 
-    #     principal, newEvecs = cel.eigenStuff(vectors, covar, k)
-    #     in_weight = cel.find_weight(newEvecs, in_vec, avg)
-    #     weights = np.array([cel.find_weight(newEvecs, x) for x in transVec])
+        principal, newEvecs = cel.eigenStuff(vectors, covar, k)
+        in_weight = cel.find_weight(newEvecs, in_vec, avg)
+        weights = np.array([cel.find_weight(newEvecs, x) for x in transVec])
 
-    #     err = [np.linalg.norm(in_weight - row) for row in weights]
-    #     index = np.argmin(err)
-    #     predic = 0
-    #     real = 0
-    #     acc = 0
-    #     if index < tempSafe:
-    #         print("Is Probably Not cancerous")
-    #     else:
-    #         print("Is probably cancerous")
-    #         predic = 1
+        err = [np.linalg.norm(in_weight - row) for row in weights]
+        index = np.argmin(err)
+        predic = 0
+        real = 0
+        acc = 0
+        if index < tempSafe:
+            print("Is Probably Not cancerous")
+        else:
+            print("Is probably cancerous")
+            predic = 1
 
-    #     if vec_index < safe:
-    #         print("Real: not cancer")
-    #     else:
-    #         print("Real: cancer")
-    #         real = 1
-    #     if real is predic:
-    #         acc = 1
-    #     min_err = err[index]
-    #     mystr = str(vec_index) + ", " + str(predic) + ", " + str(
-    #         real) + ", " + str(acc) + ", " + str(min_err) + "\n"
-    #     myf.write(mystr)
-    #     # print("Min Err:", min_err)
-    #     # if min_err < 5700000:
-    #     #     print("Our guess is most likeyly correct")
-    #     # elif min_err < 7000000:
-    #     #     print(
-    #     #         "a mamogram but does not exist in our db... our guess is probably correct?"
-    #     #     )
-    #     # else:
-    #     #     print("not a mamogram")
-    #     # cel.vectorToImage(in_vec)
-    #     # cel.vectorToImage(cel.reconstruct(newEvecs, in_weight, avg))
-    #     # cel.vectorToImage(transVec[index] + avg)
-    #     # [cel.vectorToImage(x) for x in newEvecs.T[:10]]
+        if vec_index < safe:
+            print("Real: not cancer")
+        else:
+            print("Real: cancer")
+            real = 1
+        if real is predic:
+            acc = 1
+        min_err = err[index]
+        mystr = str(vec_index) + ", " + str(predic) + ", " + str(
+            real) + ", " + str(acc) + ", " + str(min_err) + "\n"
+        myf.write(mystr)
+        # print("Min Err:", min_err)
+        # if min_err < 5700000:
+        #     print("Our guess is most likeyly correct")
+        # elif min_err < 7000000:
+        #     print(
+        #         "a mamogram but does not exist in our db... our guess is probably correct?"
+        #     )
+        # else:
+        #     print("not a mamogram")
+        # cel.vectorToImage(in_vec)
+        # cel.vectorToImage(cel.reconstruct(newEvecs, in_weight, avg))
+        # cel.vectorToImage(transVec[index] + avg)
+        # [cel.vectorToImage(x) for x in newEvecs.T[:10]]
 
-    #     # insert the image back here
-    #     np.insert(transVec, vec_index, in_vec)
+        # insert the image back here
+        np.insert(transVec, vec_index, in_vec)
     for vec_index in range(safe+1, safe+21):
         in_vec = transVec[vec_index]
         transVec = np.delete(transVec, vec_index, 0)

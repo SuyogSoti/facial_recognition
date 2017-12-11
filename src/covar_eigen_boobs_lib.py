@@ -74,7 +74,9 @@ def covariance(path):
                             prefix='Progress:',
                             suffix='Complete',
                             length=50)
-        safe = len(vectors)
+        if folder is folders[0]:
+            safe = len(vectors)
+            print(folder, safe)
 
     vectors = np.vstack(vectors)
     print("Shape of the vector is", vectors.shape)
