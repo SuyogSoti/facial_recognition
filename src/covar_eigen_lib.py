@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import numpy as np
 from PIL import Image
 import os
@@ -13,6 +12,13 @@ def read_image(picture):
         img_vec = np.append(img_vec, row)
     return img_vec
 
+def normalize(X, low, high):
+    minX, maxX = np.min(X), np.max(X)
+    X = X-minX
+    X = X/(maxX-minX)
+    X = X*(high-low)
+    X = X + low
+    return X
 
 def covariance(path):
     vectors = []
@@ -37,11 +43,11 @@ def covariance(path):
     return vectors.T, covar, avg
 
 def eigenStuff(vectors, covar, k):
-    evals, evecs = np.linalg.eigh(covar)
+    evals, evecs = np.linalg.eig(covar)
     edict = {}
+    
     for index in range(len(evals)):
         edict[evals[index]] = evecs[index]
-    principle_components = np.array([evals[0]])
     # this epsilon stuff makes it so that we only use our most important eigen
     # values
     evals = sorted(evals, reverse=True)
@@ -50,7 +56,7 @@ def eigenStuff(vectors, covar, k):
     print("Number of eigen vectors: " + str(len(principle_components)))
     for val in principle_components:
         mult = np.dot(vectors, edict[val])
-        newEvecs.append(mult)
+        newEvecs.append(normalize(mult, 0, 255))
 
     newEvecs = np.vstack(newEvecs).T
 
@@ -60,11 +66,11 @@ def eigenStuff(vectors, covar, k):
 
 def find_weight(evecs, x, mean=0):
     weight = np.dot(evecs.T, x - mean)
-    return weight
+    return weight/np.linalg.norm(weight)
 
 
 def reconstruct(evecs, weights, mean):
-    og = np.dot(evecs, weights) + mean
+    og = normalize(np.dot(evecs, weights) + mean, 0 ,255)
     # return (og*255)/max(og)
     return og
 
@@ -87,5 +93,3 @@ def count_faces():
             count += len(f[2])
     return int(count)
 
-if __name__ == '__main__':
-    count_faces()
