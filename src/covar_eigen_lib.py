@@ -12,13 +12,15 @@ def read_image(picture):
         img_vec = np.append(img_vec, row)
     return img_vec
 
+
 def normalize(X, low, high):
     minX, maxX = np.min(X), np.max(X)
-    X = X-minX
-    X = X/(maxX-minX)
-    X = X*(high-low)
+    X = X - minX
+    X = X / (maxX - minX)
+    X = X * (high - low)
     X = X + low
     return X
+
 
 def covariance(path):
     vectors = []
@@ -42,10 +44,11 @@ def covariance(path):
 
     return vectors.T, covar, avg
 
+
 def eigenStuff(vectors, covar, k):
     evals, evecs = np.linalg.eigh(covar)
     edict = {}
-    
+
     for index in range(len(evals)):
         edict[evals[index]] = evecs[index]
     # this epsilon stuff makes it so that we only use our most important eigen
@@ -64,13 +67,14 @@ def eigenStuff(vectors, covar, k):
     # print(newEvecs.shape)
     return principle_components, newEvecs
 
+
 def find_weight(evecs, x, mean=0):
     weight = np.dot(evecs.T, x - mean)
-    return weight/np.linalg.norm(weight)
+    return weight / np.linalg.norm(weight)
 
 
 def reconstruct(evecs, weights, mean):
-    og = normalize(np.dot(evecs, weights) + mean, 0 ,255)
+    og = normalize(np.dot(evecs, weights) + mean, 0, 255)
     # return (og*255)/max(og)
     return og
 
@@ -92,4 +96,3 @@ def count_faces():
         if '/s' in f[0]:
             count += len(f[2])
     return int(count)
-
